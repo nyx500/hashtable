@@ -186,6 +186,38 @@ void HashTable::extend() {
 }
 
 bool HashTable::find(int key) {
+
+  // Apply hash function to the key
+  int indexToSearch = ((a * key) + c) % m;
+
+  // Once 'm' comparisons are made looping around the hash table (to account for the linear probing), this means the key is not in the table
+  int numberAttempts = 0;
+
+  // Do not check more than m elements, or there would be an infinite loop
+  while (numberAttempts < m)
+  { 
+    // Return 'true' if the index to search by in the hash table stores the desired key
+    if (*(buckets + indexToSearch) == key)
+    {
+      return true;
+    }
+    else
+    { 
+      // Loop around the hash table if index is the last element of the hash table
+      if (indexToSearch == m-1)
+      {
+        indexToSearch = 0;
+      }
+      // If not at the last index, just increment the index to search the next element in the hash table
+      else
+      {
+        ++indexToSearch;
+      }
+    }
+    
+    ++numberAttempts;
+  }
+
   return false;
 }
 

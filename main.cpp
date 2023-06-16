@@ -21,5 +21,39 @@ int main()
     std::cout << "FINAL HASH TABLE: ";
     ht.printFinalHashTable();
 
+    // Should return false
+    bool resultOfTest1 = ht.find(7);
+    if (resultOfTest1)
+    {
+        std::cout << "Test 1: " << "7 is in the hash table." << std::endl;
+    }
+    else
+    {
+        std::cout << "Test 1: " << "7 is not in the hash table." << std::endl;
+    }
+  
+
+    // Should return true
+    bool resultOfTest2 = ht.find(8);
+    if (resultOfTest2)
+    {
+        std::cout << "Test 2: " << "8 is in the hash table." << std::endl;
+    }
+    else
+    {
+        std::cout << "Test 2: " << "8 is not in the hash table." << std::endl;
+    }
+
+     // Should return true
+    bool resultOfTest3 = ht.find(6);
+    if (resultOfTest3)
+    {
+        std::cout << "Test 3: " << "6 is in the hash table." << std::endl;
+    }
+    else
+    {
+        std::cout << "Test 3: " << "6 is not in the hash table." << std::endl;
+    }
+  
     return 0;
  }
