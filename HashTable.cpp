@@ -18,6 +18,8 @@ HashTable::HashTable(long _a, long _c, long _m) {
    * Here the pointer called 'buckets' is used to store the pointer returned from using the 'new' keyword.
    * "buckets" now stores a pointer to the **first element** in the array of m-integers.
    * Ref: https://www.programiz.com/cpp-programming/pointers-arrays
+   *  The new keyword allocates memory on the heap for the specified data_type and size
+   * Ref: https://www.educative.io/answers/how-to-dynamically-allocate-initialize-and-delete-arrays-in-cpp
   */
   buckets = new int[m];
 
@@ -77,6 +79,14 @@ void HashTable::insert(int key) {
   // Get the load factor using the loadFactor function
   double loadFactor = HashTable::loadFactor();
 
+  if (loadFactor >= 1)
+  {
+    std::cout << "LOAD FACTOR IS 1 OR GREATER!" << std::endl;
+
+    // Extend the table so we can rehash everything
+    HashTable::extend();
+  }
+
   // Calculate the function f(key) = (a*k + c) mod m, store this in a variable called 'index'
   int hash = (a * key + c) % m;
 
@@ -114,7 +124,65 @@ void HashTable::insert(int key) {
   *(buckets + index) = key;
 }
 
+
+/** Extend and rehash the existing hash table */
 void HashTable::extend() {
+
+  /** Create a new **bigger** array, which should temporarily store all the contents of the current hash-table pointed to by "buckets" */
+  // 1. Initalize a new array with m * 2 elements (thus doubling the size of the current hash table)
+  // 2. 'tempHashTable' points to this temporary array/hashTable, which is twice the size of the original hash table
+  int* tempHashTable = new int[m * 2];  // This temporary array will be destroyed afetr exiting the function, so there is no memory leak.
+
+  // Transfer the contents of 'buckets' to bigger temp array
+  for (int i = 0; i < m; ++i)
+  {
+    *(tempHashTable + i) = *(buckets + i);
+  }
+  // Fill the remaining slots in the temp array with -1s
+  for (int i = m; i < m * 2; ++i)
+  {
+    *(tempHashTable + i) = -1;
+  }
+  std::cout << "Contents of temp hash table: " << std::endl;
+  for (int i = 0; i < m * 2; ++i)
+  {
+    std::cout << *(tempHashTable + i) << std::endl;
+  }
+
+  // Delete the current hash table, so deallocate memory from the heap which was used for the old hash table
+  // Ref: https://www.educative.io/answers/how-to-dynamically-allocate-initialize-and-delete-arrays-in-cpp
+  delete[] buckets;
+
+  // Make 'buckets' point to a new, expanded hash table
+  buckets = new int[m * 2];
+  
+  // Update 'm' to be m*2 (number of buckets)
+  m = m*2;
+
+  // Initialize buckets elems to - 1 again
+  for (int i = 0; i < m; ++i)
+  { 
+    *(buckets + i) = -1;
+  }
+
+  // Rehash the contents of the temporary array into the new larger 'buckets' array
+  int index = 0;
+
+  while (*(tempHashTable + index) != -1)
+  { 
+    std::cout << "Current Index: " << index << std::endl;
+    std::cout << "Inserting key : " << *(tempHashTable + index) << std::endl;
+
+    HashTable::insert(*(tempHashTable + index));
+    ++index;
+  }
+
+  std::cout << "First table rehashed: " << std::endl;
+  for (int i = 0; i < m; i++)
+  {
+    std::cout << *(buckets + i) << ", " << std::endl;
+  }
+
 }
 
 bool HashTable::find(int key) {
@@ -144,15 +212,6 @@ double HashTable::loadFactor() {
   double loadFactor = double(numbersStored) / double(m);
 
   std::cout << "Load factor is: " << loadFactor << std::endl;
-
-  // If the load factor is 1, call 'extend' and extend & rehash the table
-  if (loadFactor >= 1)
-  {
-    std::cout << "Load factor is greater than 1!" << std::endl;
-
-    // Crash out for now, do rest later!
-    throw; 
-  }
 
   return loadFactor;
 

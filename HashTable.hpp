@@ -19,7 +19,10 @@ public:
   ~HashTable();
   
   void insert(int);
+
+  /** Extend and rehash the existing hash table */
   void extend();
+  
   bool find(int);
   void remove(int);
   

@@ -4,7 +4,7 @@
 int main()
 {   
     // Initialize and define test array
-    int practice_array[5] = {9, 4, 8, 2, 5};
+    int practice_array[6] = {9, 4, 8, 2, 5, 6};
 
     // Creates the hash table
     HashTable ht(2, 4, 5);
@@ -18,6 +18,7 @@ int main()
     // Print out final array
     std::cout << std::endl;
     std::cout << std::endl;
+    std::cout << "FINAL HASH TABLE: ";
     ht.printFinalHashTable();
 
     return 0;
