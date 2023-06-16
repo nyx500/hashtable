@@ -54,6 +54,24 @@ int main()
     {
         std::cout << "Test 3: " << "6 is not in the hash table." << std::endl;
     }
-  
+    
+    // Test removing 8
+    ht.remove(8);
+
+    std::cout << "Hash table with 8 deleted: " << std::endl;
+    ht.printFinalHashTable();
+
+     // Test removing 7 (not in the hash table)
+    ht.remove(7);
+
+    std::cout << "Hash table with 7 deleted: " << std::endl;
+    ht.printFinalHashTable();
+
+
+    // Test adding 8 back into hash table
+    std::cout << "Adding 8 back in: " << std::endl;
+    ht.insert(8);
+    ht.printFinalHashTable();
+
     return 0;
  }

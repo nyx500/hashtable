@@ -22,8 +22,11 @@ public:
 
   /** Extend and rehash the existing hash table */
   void extend();
-  
+
   bool find(int);
+
+  int findAndReturnIndex(int);
+
   void remove(int);
   
   /** Calculates the load factor: (numbers already in hash table)/(total size of hash table) */

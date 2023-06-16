@@ -204,7 +204,7 @@ bool HashTable::find(int key) {
     else
     { 
       // Loop around the hash table if index is the last element of the hash table
-      if (indexToSearch == m-1)
+      if (indexToSearch == m - 1)
       {
         indexToSearch = 0;
       }
@@ -214,14 +214,59 @@ bool HashTable::find(int key) {
         ++indexToSearch;
       }
     }
-    
+
     ++numberAttempts;
   }
 
   return false;
 }
 
+int HashTable::findAndReturnIndex(int key){
+
+   // Apply hash function to the key
+  int indexToSearch = ((a * key) + c) % m;
+
+  // Once 'm' comparisons are made looping around the hash table (to account for the linear probing), this means the key is not in the table
+  int numberAttempts = 0;
+
+  // Do not check more than m elements, or there would be an infinite loop
+  while (numberAttempts < m)
+  { 
+    // Return 'true' if the index to search by in the hash table stores the desired key
+    if (*(buckets + indexToSearch) == key)
+    {
+      return indexToSearch;
+    }
+    else
+    { 
+      // Loop around the hash table if index is the last element of the hash table
+      if (indexToSearch == m - 1)
+      {
+        indexToSearch = 0;
+      }
+      // If not at the last index, just increment the index to search the next element in the hash table
+      else
+      {
+        ++indexToSearch;
+      }
+    }
+
+    ++numberAttempts;
+  }
+
+  // Return -1 if index not found
+  return -1;
+}
+
 void HashTable::remove(int key){
+
+  // Run findAndReturnIndex to find the index in hash table where you would like to delete the key
+  int indexWhereToDelete = findAndReturnIndex(key); // Returns -1 if key not found
+
+  if (indexWhereToDelete != -1)
+  {
+    *(buckets + indexWhereToDelete) = -1;
+  }
 }
 
 // Calculates the load factor: (numbers already in hash table)/(total size of hash table)
