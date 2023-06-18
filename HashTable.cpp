@@ -6,7 +6,6 @@
   * to the hash table 'buckets'
 */
 HashTable::HashTable(long _a, long _c, long _m) {
-  std::cout << "Creating hash table from coefficient 'a':  " << _a << " coefficient 'c': " << _c <<  " nr buckets 'm' :" << _m << std::endl;
   a = _a;
   c = _c;
   m = _m;
@@ -23,18 +22,6 @@ HashTable::HashTable(long _a, long _c, long _m) {
   */
   buckets = new int[m];
 
-  // IMPORTANT SYNTAX:
-  // *buckets is equivalent to array[0], *(buckets + 1) is equivalent to array[1], and so on...
-  for (int i = 0; i < m; ++i)
-  {
-    std::cout << "Value of *(buckets + " << i << ") is equivalent to array[" << i << "] : " << *(buckets + i) << std::endl;
-    
-    // Without the '*' dereferencer, (buckets + i) stores the address of the i'th location in the hash table
-    std::cout << "Address in memory of bucket #" << i << ": " << (buckets + i) << std::endl;
-
-    std::cout << std::endl;
-  }
-
   // Initialize the values in every 'bucket' to -1,
   // This is because currently some buckets store 0 and some store nonsense-values..
   // It could be confusing when sometimes you want a genuine 0 from the input array stored 
@@ -45,21 +32,13 @@ HashTable::HashTable(long _a, long _c, long _m) {
     // Therefore, * to dereference (buckets + i) grants access to the element
     *(buckets + i) = -1;
   }
-
-  // Print again to check that values are all -1 now
-  // Values in the memory cells have all been changed to -1, but the addresses in memory are the same
-  for (int i = 0; i < m; ++i)
-  {
-    std::cout << "Value of *(buckets + " << i << ") is equivalent to array[" << i << "] : " << *(buckets + i) << std::endl;
-    std::cout << "Address in memory of bucket #" << i << ": " << (buckets + i) << std::endl;
-    std::cout << std::endl;
-  }
   
 }
 
 HashTable::~HashTable() {
 }
 
+/** Hashes and inserts a number into the hash table pointed to by 'buckets' */
 void HashTable::insert(int key) {
 
   /**************PSEUDOCODE****************/
@@ -72,25 +51,17 @@ void HashTable::insert(int key) {
     throw;
   }
 
-  std::cout << std::endl;
-  std::cout << std::endl;
-  std::cout << "CURRENT KEY: " << key << std::endl;
-
   // Get the load factor using the loadFactor function
   double loadFactor = HashTable::loadFactor();
 
   if (loadFactor >= 1)
   {
-    std::cout << "LOAD FACTOR IS 1 OR GREATER!" << std::endl;
-
     // Extend the table so we can rehash everything
     HashTable::extend();
   }
 
   // Calculate the function f(key) = (a*k + c) mod m, store this in a variable called 'index'
   int hash = (a * key + c) % m;
-
-  std::cout << "Output of (ak + c) mod m = " << hash << std::endl;
 
   // Check the value at the 'index' of the hash table
   int index = hash;
@@ -101,31 +72,24 @@ void HashTable::insert(int key) {
   // Once you find index which is set to -1 as the value, insert the key
   while (*(buckets + index) != -1)
   { 
-    
-    std::cout << "Current index in hash table: " << index << std::endl;
-    std::cout << "Current value in the hash table at " << index << " : " << *(buckets + index) << std::endl;
 
     if (index == (m-1))
     { 
-      std::cout << "Last index in the hash table: loop around!" << std::endl;
       index = 0;
     }
     else
     { 
-      std::cout << "Value at " << index << " in the hash table is not -1, so we will increment the index by 1" << std::endl;
       ++index;
     }
   }
 
   // If the value is -1, insert the key into that slot by using *(buckets + index)
-  std::cout << "INSERTING THE KEY " << key << " AT INDEX " << index << std::endl;
-  std::cout << std::endl;
-  std::cout << std::endl;
   *(buckets + index) = key;
 }
 
 
-/** Extend and rehash the existing hash table */
+
+/** Extends and rehashes the existing hash table by a factor of 2 */
 void HashTable::extend() {
 
   /** Create a new **bigger** array, which should temporarily store all the contents of the current hash-table pointed to by "buckets" */
@@ -142,11 +106,6 @@ void HashTable::extend() {
   for (int i = m; i < m * 2; ++i)
   {
     *(tempHashTable + i) = -1;
-  }
-  std::cout << "Contents of temp hash table: " << std::endl;
-  for (int i = 0; i < m * 2; ++i)
-  {
-    std::cout << *(tempHashTable + i) << std::endl;
   }
 
   // Delete the current hash table, so deallocate memory from the heap which was used for the old hash table
@@ -170,21 +129,14 @@ void HashTable::extend() {
 
   while (*(tempHashTable + index) != -1)
   { 
-    std::cout << "Current Index: " << index << std::endl;
-    std::cout << "Inserting key : " << *(tempHashTable + index) << std::endl;
-
     HashTable::insert(*(tempHashTable + index));
     ++index;
   }
-
-  std::cout << "First table rehashed: " << std::endl;
-  for (int i = 0; i < m; i++)
-  {
-    std::cout << *(buckets + i) << ", " << std::endl;
-  }
-
 }
 
+
+
+/** Searches for the inputted integer in the hash table, returns 'true' if found and 'false' if not*/
 bool HashTable::find(int key) {
 
   // Apply hash function to the key
@@ -221,6 +173,8 @@ bool HashTable::find(int key) {
   return false;
 }
 
+
+/** Searches for the inputted integer in the hash table and returns its index in the table, returns -1 if not found */
 int HashTable::findAndReturnIndex(int key){
 
    // Apply hash function to the key
@@ -258,6 +212,8 @@ int HashTable::findAndReturnIndex(int key){
   return -1;
 }
 
+
+/** Removes the inputted integer from the hash table */
 void HashTable::remove(int key){
 
   // Run findAndReturnIndex to find the index in hash table where you would like to delete the key
@@ -269,7 +225,8 @@ void HashTable::remove(int key){
   }
 }
 
-// Calculates the load factor: (numbers already in hash table)/(total size of hash table)
+
+/** Calculates the load factor: (numbers already in hash table)/(total size of hash table) */
 double HashTable::loadFactor() {
   
   // Calculate number of numbers already stored in the hash table
@@ -283,12 +240,8 @@ double HashTable::loadFactor() {
     }
   }
 
-  std:: cout << "NUMBER OF NUMBERS STORED: " << numbersStored << ", m: " << m << std::endl;
-
   // To divide number of used-up slots by total number of slots/indices in the hash table, we need to convert them to doubles.
   double loadFactor = double(numbersStored) / double(m);
-
-  std::cout << "Load factor is: " << loadFactor << std::endl;
 
   return loadFactor;
 
